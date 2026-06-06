@@ -18,8 +18,8 @@ resource "azurerm_static_web_app" "swa" {
 
 # Create Static Web App Custom Domain (optional)
 resource "azurerm_static_web_app_custom_domain" "custom_domain" {
-  count           = var.custom_domain != null ? 1 : 0
+  count             = var.custom_domain != null ? 1 : 0
   static_web_app_id = azurerm_static_web_app.swa.id
-  domain_name     = var.custom_domain
-  validation_type = var.validation_type
+  domain_name       = var.custom_domain
+  validation_type   = var.validation_type
 }
