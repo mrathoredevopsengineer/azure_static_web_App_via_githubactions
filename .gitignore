@@ -5,7 +5,6 @@
 .terraform.lock.hcl
 crash.log
 crash.*.log
-*.tfvars.json
 override.tf
 override.tf.json
 *_override.tf
@@ -25,9 +24,7 @@ tfplan
 crash.log
 crash.*.log
 
-# Exclude all .tfvars files, which might contain sensitive data
-*.tfvars
-*.tfvars.json
+
 
 # Ignore override files
 override.tf
