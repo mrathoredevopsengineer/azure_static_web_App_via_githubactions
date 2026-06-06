@@ -1,0 +1,22 @@
+staticWebAppName: "azure-static-web-app"
+routes:
+  - route: "/*"
+    serve: "/index.html"
+    statusCode: 200
+  - route: "/api/*"
+    allowedRoles:
+      - authenticated
+responseOverrides:
+  - route: "/404"
+    statusCode: 404
+  - route: "/401"
+    statusCode: 401
+  - route: "/403"
+    statusCode: 403
+  - route: "/500"
+    statusCode: 500
+navigationFallback:
+  rewrite: "/index.html"
+  exclude:
+    - "/api/*"
+    - "*.{css,gif,ico,jpg,js,png,txt,svg,webp,woff,woff2}"
