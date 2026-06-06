@@ -46,12 +46,18 @@ jobs:
 
       - name: Terraform Init
         working-directory: ${{ env.WORKING_DIRECTORY }}
+        env:
+          ARM_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          ARM_TENANT_ID: ${{ secrets.TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
+          ARM_USE_OIDC: true
         run: |
           terraform init \
             -backend-config="resource_group_name=terraform-state-rg" \
             -backend-config="storage_account_name=tfstatedevnoida" \
             -backend-config="container_name=tfstate" \
-            -backend-config="key=${{ env.ENVIRONMENT }}/terraform.tfstate"
+            -backend-config="key=${{ env.ENVIRONMENT }}/terraform.tfstate" \
+            -backend-config="use_azuread_auth=true"
 
       - name: Terraform Format Check
         working-directory: ${{ env.WORKING_DIRECTORY }}
@@ -63,6 +69,11 @@ jobs:
 
       - name: Terraform Plan
         working-directory: ${{ env.WORKING_DIRECTORY }}
+        env:
+          ARM_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          ARM_TENANT_ID: ${{ secrets.TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
+          ARM_USE_OIDC: true
         run: |
           terraform plan \
             -var-file="env/${{ env.ENVIRONMENT }}/${{ env.ENVIRONMENT }}.tfvars" \
@@ -104,15 +115,26 @@ jobs:
 
       - name: Terraform Init
         working-directory: ${{ env.WORKING_DIRECTORY }}
+        env:
+          ARM_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          ARM_TENANT_ID: ${{ secrets.TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
+          ARM_USE_OIDC: true
         run: |
           terraform init \
             -backend-config="resource_group_name=terraform-state-rg" \
             -backend-config="storage_account_name=tfstatedev" \
             -backend-config="container_name=tfstate" \
-            -backend-config="key=${{ env.ENVIRONMENT }}/terraform.tfstate"
+            -backend-config="key=${{ env.ENVIRONMENT }}/terraform.tfstate" \
+            -backend-config="use_azuread_auth=true"
 
       - name: Terraform Apply
         working-directory: ${{ env.WORKING_DIRECTORY }}
+        env:
+          ARM_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          ARM_TENANT_ID: ${{ secrets.TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
+          ARM_USE_OIDC: true
         run: terraform apply -auto-approve tfplan
 
       - name: Get Outputs
