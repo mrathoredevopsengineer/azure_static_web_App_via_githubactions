@@ -20,4 +20,7 @@ provider "azurerm" {
       skip_shutdown_and_force_delete         = false
     }
   }
+
+  # Use Azure CLI for authentication (OIDC federated credentials)
+  use_cli = true
 }
