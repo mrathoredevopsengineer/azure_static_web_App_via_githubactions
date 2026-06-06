@@ -26,6 +26,10 @@ on:
           - staging
           - prod
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
   TERRAFORM_VERSION: 1.5.0
   WORKING_DIRECTORY: ./infra
