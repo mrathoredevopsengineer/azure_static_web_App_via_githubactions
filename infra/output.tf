@@ -28,3 +28,33 @@ output "api_key" {
   value       = azurerm_static_web_app.swa.api_key
   sensitive   = true
 }
+
+output "private_endpoint_id" {
+  description = "The ID of the Private Endpoint"
+  value       = azurerm_private_endpoint.swa_pe.id
+}
+
+output "private_endpoint_ip_address" {
+  description = "The private IP address of the Private Endpoint"
+  value       = azurerm_private_endpoint.swa_pe.private_service_connection[0].private_ip_address
+}
+
+output "vnet_id" {
+  description = "The ID of the Virtual Network"
+  value       = azurerm_virtual_network.vnet.id
+}
+
+output "pe_subnet_id" {
+  description = "The ID of the Private Endpoint subnet"
+  value       = azurerm_subnet.pe_subnet.id
+}
+
+output "private_dns_zone_id" {
+  description = "The ID of the Private DNS Zone"
+  value       = azurerm_private_dns_zone.swa_dns.id
+}
+
+output "private_dns_fqdn" {
+  description = "The FQDN of the Static Web App in Private DNS"
+  value       = "${azurerm_static_web_app.swa.name}.privatelink.staticwebapps.azure.com"
+}

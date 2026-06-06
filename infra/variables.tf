@@ -47,3 +47,15 @@ variable "validation_type" {
   type        = string
   default     = "cname"
 }
+
+variable "vnet_address_space" {
+  description = "Address space for Virtual Network"
+  type        = list(string)
+  default     = ["10.0.0.0/16"]
+}
+
+variable "pe_subnet_address_prefix" {
+  description = "Address prefix for Private Endpoint subnet"
+  type        = list(string)
+  default     = ["10.0.1.0/24"]
+}
