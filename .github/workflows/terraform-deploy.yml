@@ -4,27 +4,15 @@ on:
   push:
     branches:
       - main
-      - develop
     paths:
       - 'infra/**'
       - '.github/workflows/terraform-deploy.yml'
   pull_request:
     branches:
       - main
-      - develop
     paths:
       - 'infra/**'
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy to'
-        required: true
-        default: 'dev'
-        type: choice
-        options:
-          - dev
-          - staging
-          - prod
 
 permissions:
   id-token: write
@@ -33,32 +21,13 @@ permissions:
 env:
   TERRAFORM_VERSION: 1.5.0
   WORKING_DIRECTORY: ./infra
+  ENVIRONMENT: dev
 
 jobs:
-  determine-environment:
-    runs-on: ubuntu-latest
-    outputs:
-      environment: ${{ steps.set-env.outputs.environment }}
-    steps:
-      - name: Determine Environment
-        id: set-env
-        run: |
-          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "environment=prod" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
-            echo "environment=staging" >> $GITHUB_OUTPUT
-          else
-            echo "environment=dev" >> $GITHUB_OUTPUT
-          fi
-          # Override with workflow_dispatch input if provided
-          if [[ -n "${{ github.event.inputs.environment }}" ]]; then
-            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
-          fi
 
   terraform-plan:
     runs-on: ubuntu-latest
-    needs: determine-environment
-    environment: ${{ needs.determine-environment.outputs.environment }}
+    environment: dev
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -82,7 +51,7 @@ jobs:
             -backend-config="resource_group_name=terraform-state-rg" \
             -backend-config="storage_account_name=tfstatedevnoida" \
             -backend-config="container_name=tfstate" \
-            -backend-config="key=${{ needs.determine-environment.outputs.environment }}/terraform.tfstate"
+            -backend-config="key=${{ env.ENVIRONMENT }}/terraform.tfstate"
 
       - name: Terraform Format Check
         working-directory: ${{ env.WORKING_DIRECTORY }}
@@ -96,21 +65,21 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
           terraform plan \
-            -var-file="env/${{ needs.determine-environment.outputs.environment }}/${{ needs.determine-environment.outputs.environment }}.tfvars" \
+            -var-file="env/${{ env.ENVIRONMENT }}/${{ env.ENVIRONMENT }}.tfvars" \
             -out=tfplan
 
       - name: Upload Terraform Plan
         uses: actions/upload-artifact@v4
         with:
-          name: tfplan-${{ needs.determine-environment.outputs.environment }}
+          name: tfplan-${{ env.ENVIRONMENT }}
           path: ${{ env.WORKING_DIRECTORY }}/tfplan
           retention-days: 5
 
   terraform-apply:
     runs-on: ubuntu-latest
-    needs: [determine-environment, terraform-plan]
+    needs: terraform-plan
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-    environment: ${{ needs.determine-environment.outputs.environment }}
+    environment: dev
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -130,7 +99,7 @@ jobs:
       - name: Download Terraform Plan
         uses: actions/download-artifact@v4
         with:
-          name: tfplan-${{ needs.determine-environment.outputs.environment }}
+          name: tfplan-${{ env.ENVIRONMENT }}
           path: ${{ env.WORKING_DIRECTORY }}
 
       - name: Terraform Init
@@ -140,7 +109,7 @@ jobs:
             -backend-config="resource_group_name=terraform-state-rg" \
             -backend-config="storage_account_name=tfstatedev" \
             -backend-config="container_name=tfstate" \
-            -backend-config="key=${{ needs.determine-environment.outputs.environment }}/terraform.tfstate"
+            -backend-config="key=${{ env.ENVIRONMENT }}/terraform.tfstate"
 
       - name: Terraform Apply
         working-directory: ${{ env.WORKING_DIRECTORY }}
@@ -158,7 +127,7 @@ jobs:
         run: |
           echo "## Terraform Deployment Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Environment:** ${{ needs.determine-environment.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ env.ENVIRONMENT }}" >> $GITHUB_STEP_SUMMARY
           echo "**Static Web App Name:** ${{ steps.outputs.outputs.static_web_app_name }}" >> $GITHUB_STEP_SUMMARY
           echo "**Default Host Name:** ${{ steps.outputs.outputs.default_host_name }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -167,6 +136,6 @@ jobs:
       - name: Upload Outputs
         uses: actions/upload-artifact@v4
         with:
-          name: terraform-outputs-${{ needs.determine-environment.outputs.environment }}
+          name: terraform-outputs-${{ env.ENVIRONMENT }}
           path: ${{ env.WORKING_DIRECTORY }}/outputs.json
           retention-days: 30
