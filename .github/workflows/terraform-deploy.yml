@@ -96,7 +96,7 @@ jobs:
             -out=tfplan
 
       - name: Upload Terraform Plan
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: tfplan-${{ needs.determine-environment.outputs.environment }}
           path: ${{ env.WORKING_DIRECTORY }}/tfplan
@@ -119,12 +119,12 @@ jobs:
       - name: Azure Login
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.CLIENT_ID }}
+          tenant-id: ${{ secrets.TENANT_ID }}
+          subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
 
       - name: Download Terraform Plan
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: tfplan-${{ needs.determine-environment.outputs.environment }}
           path: ${{ env.WORKING_DIRECTORY }}
@@ -161,7 +161,7 @@ jobs:
           echo "✅ Deployment completed successfully!" >> $GITHUB_STEP_SUMMARY
 
       - name: Upload Outputs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: terraform-outputs-${{ needs.determine-environment.outputs.environment }}
           path: ${{ env.WORKING_DIRECTORY }}/outputs.json
