@@ -56,8 +56,7 @@ jobs:
             -backend-config="resource_group_name=terraform-state-rg" \
             -backend-config="storage_account_name=tfstatedevnoida" \
             -backend-config="container_name=tfstate" \
-            -backend-config="key=${{ env.ENVIRONMENT }}/terraform.tfstate" \
-            -backend-config="use_azuread_auth=true"
+            -backend-config="key=${{ env.ENVIRONMENT }}/terraform.tfstate"
 
       - name: Terraform Format Check
         working-directory: ${{ env.WORKING_DIRECTORY }}
@@ -125,8 +124,7 @@ jobs:
             -backend-config="resource_group_name=terraform-state-rg" \
             -backend-config="storage_account_name=tfstatedev" \
             -backend-config="container_name=tfstate" \
-            -backend-config="key=${{ env.ENVIRONMENT }}/terraform.tfstate" \
-            -backend-config="use_azuread_auth=true"
+            -backend-config="key=${{ env.ENVIRONMENT }}/terraform.tfstate"
 
       - name: Terraform Apply
         working-directory: ${{ env.WORKING_DIRECTORY }}
