@@ -21,6 +21,7 @@ provider "azurerm" {
     }
   }
 
-  # Use Azure CLI for authentication (OIDC federated credentials)
-  use_cli = true
+  # Use OIDC for authentication (GitHub Actions federated credentials)
+  # azure/login@v1 sets ARM_USE_OIDC, ARM_OIDC_TOKEN, ARM_CLIENT_ID, ARM_TENANT_ID, ARM_SUBSCRIPTION_ID
+  use_oidc = true
 }
