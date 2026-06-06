@@ -80,7 +80,7 @@ jobs:
         run: |
           terraform init \
             -backend-config="resource_group_name=terraform-state-rg" \
-            -backend-config="storage_account_name=tfstatedev" \
+            -backend-config="storage_account_name=tfstatedevnoida" \
             -backend-config="container_name=tfstate" \
             -backend-config="key=${{ needs.determine-environment.outputs.environment }}/terraform.tfstate"
 
