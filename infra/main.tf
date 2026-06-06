@@ -1,8 +1,8 @@
 # Create Resource Group
 resource "azurerm_resource_group" "rg" {
-  name       = "${local.resource_prefix}-rg"
-  location   = local.location
-  tags       = local.common_tags
+  name     = "${local.resource_prefix}-rg"
+  location = local.location
+  tags     = local.common_tags
 }
 
 # Create Static Web App
