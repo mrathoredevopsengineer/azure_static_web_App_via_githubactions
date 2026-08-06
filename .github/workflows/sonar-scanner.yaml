@@ -5,7 +5,7 @@ on:
 
 jobs:
   sonar:
-    runs-on: self-hosted
+    runs-on: [self-hosted, Windows, X64]   # ✅ Explicit labels
 
     steps:
       - name: Checkout
